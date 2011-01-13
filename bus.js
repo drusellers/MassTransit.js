@@ -1,15 +1,17 @@
-serializer = require('./serializer');
-
 var bus = {
 	
 	subs : {},
+	
+	transport : require('./transports/amqp'),
+	
+	serializer : require("./serializer"),
 	
 	publish : function(msg)
 	{
 		msg_name = msg.name;
 		var env = {
 			MessageName : msg.name,
-			Message : serializer.serialize(msg)
+			Message : this.serializer.serialize(msg)
 		}
 		//push into the queue
 		
