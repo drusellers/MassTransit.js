@@ -1,5 +1,5 @@
 var serializer = require('./serializer'),
-		transport = require('./transports/amqpTransport'),
+		transport = require('./transports/amqp'),
 		subscribers = {},
 		isReady = false,
 		readyCallback;
@@ -11,7 +11,7 @@ var callbackIfReady = function() {
 };
 
 var deliver = function(env) {
-	var callbacks = subscribers[env.messageName];
+	var callbacks = subscribers[env.name];
 	if(callbacks) {
 		callbacks.forEach(function(cb) {
 			cb(serializer.deserialize(env.message));
@@ -21,7 +21,7 @@ var deliver = function(env) {
 	
 var publish = function(msg) {
 	var envelope = {
-				messageName : msg.name,
+				name: msg.name,
 				message : serializer.serialize(msg)
 			};
 	transport.publish(envelope);
@@ -32,17 +32,21 @@ var ready = function(callback) {
 	callbackIfReady();
 };
 
-var subscribe = function (msg_name, callback) {
-	subscribers[msg_name] = subscribers[msg_name] || [];
-	subscribers[msg_name].push(callback);
+var subscribe = function (messageName, callback) {
+	subscribers[messageName] = subscribers[messageName] || [];
+	subscribers[messageName].push(callback);
+	transport.bind(messageName);
 };
 
 
-transport.ready(function() {
+transport.addListener('open', function() {
 	isReady = true;
-	transport.onMessageDelivered(deliver);
 	callbackIfReady();
 });
+
+transport.addListener('messageReceived', deliver);
+
+transport.open();
 
 
 module.exports.deliver = deliver;
