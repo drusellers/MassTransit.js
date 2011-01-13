@@ -1,12 +1,8 @@
 var serializer = require('./serializer'),
-		amqp = require('amqp'),
+		transport = require('./amqpTransport'),
 		subscribers = {},
 		isReady = false,
-		readyCallback,
-		q,
-		queueIsReady = false,
-		exch,
-		exchangeIsReady = false;
+		readyCallback;
 
 var callbackIfReady = function() {
 	if(isReady && readyCallback) {
@@ -17,7 +13,7 @@ var callbackIfReady = function() {
 var deliver = function(env) {
 	var callbacks = subscribers[env.messageName];
 	if(callbacks) {
-		callbacks.forEach(function(cb){
+		callbacks.forEach(function(cb) {
 			cb(serializer.deserialize(env.message));
 		});
 	}
@@ -28,7 +24,7 @@ var publish = function(msg) {
 				messageName : msg.name,
 				message : serializer.serialize(msg)
 			};
-	exch.publish('', envelope);
+	transport.publish(envelope);
 };
 	
 var ready = function(callback) {
@@ -42,30 +38,13 @@ var subscribe = function (msg_name, callback) {
 };
 
 
-
-//configElement
-var con = amqp.createConnection({ host: '0.0.0.0' });
-var attemptBind = function() {
-	if(queueIsReady && exchangeIsReady) {
-		isReady = true;
-		q.bind('nodeex', '');
-		callbackIfReady();
-	}
-};
-
-con.addListener('ready', function() {
-	exch = con.exchange('nodeex', { durable: true, type: 'fanout' });
-	q = con.queue('node', { durable: true }, function() {
-		queueIsReady = true;
-		attemptBind();
-		q.subscribe(deliver);
-	});
-
-	exch.addListener('open', function() {
-		exchangeIsReady = true;
-		attemptBind();
-	});
+transport.ready(function() {
+console.log('transport ready');
+	isReady = true;
+	transport.onMessageDelivered(deliver);
+	callbackIfReady();
 });
+
 
 module.exports.deliver = deliver;
 module.exports.publish = publish;
