@@ -1,0 +1,5 @@
+var envelope = {
+	message : "",
+	messageName : ""
+}
+
