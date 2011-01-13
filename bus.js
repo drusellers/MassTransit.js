@@ -1,43 +1,42 @@
-var bus = {
-	
-	subs : {},
-	
-	transport : require('./transports/amqp'),
-	
-	serializer : require("./serializer"),
-	
-	publish : function(msg)
-	{
-		msg_name = msg.name;
-		var env = {
-			MessageName : msg.name,
-			Message : this.serializer.serialize(msg)
-		}
-		//push into the queue
-		
-	},
-	
-	deliver : function(env){
-		backs = this.subs[env.messageName];
-		if(backs != null)
-		{
-			backs.forEach(function(cb){
-				cb(env.message);
-			});
-		}
-	},
-	
-	subscribe : function (msg_name, callback)
-	{
-		backs = this.subs[msg_name];
-		if(backs == null)
-		{
-			backs = [];
-		}
-		
-		backs.push(callback);
-		
-		this.subs[msg_name] = backs;
+var serializer = require('./serializer'),
+		subscribers = {},
+		isReady = false,
+		readyCallback;
+
+var callbackIfReady = function() {
+	if(isReady) {
+		readyCallback();
 	}
-}
-module.exports=bus;
+};
+
+var deliver = function(env) {
+	var callbacks = subscribers[env.messageName];
+	if(callbacks) {
+		callbacks.forEach(function(cb){
+			cb(env.message);
+		});
+	}
+};
+	
+var publish = function(msg) {
+	var envelope = {
+				messageName : msg.name,
+				message : serializer.serialize(msg)
+			};
+		//push into the queue
+};
+	
+var ready = function(callback) {
+	readyCallback = callback;
+	callbackIfReady();
+};
+
+var subscribe = function (msg_name, callback) {
+	subscriptions[msg_name] = subscriptions[msg_name] || [];
+	subscriptions[msg_name].push(callback);
+};
+
+module.exports.deliver = deliver;
+module.exports.publish = publish;
+module.exports.ready = ready;
+module.exports.subscribe = subscribe;
