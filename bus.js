@@ -1,5 +1,5 @@
 var serializer = require('./serializer'),
-		transport = require('./amqpTransport'),
+		transport = require('./transports/amqpTransport'),
 		subscribers = {},
 		isReady = false,
 		readyCallback;
@@ -39,7 +39,6 @@ var subscribe = function (msg_name, callback) {
 
 
 transport.ready(function() {
-console.log('transport ready');
 	isReady = true;
 	transport.onMessageDelivered(deliver);
 	callbackIfReady();
