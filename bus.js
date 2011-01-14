@@ -11,18 +11,19 @@ var callbackIfReady = function() {
 };
 
 var deliver = function(env) {
-	var callbacks = subscribers[env.name];
+	var message = JSON.parse(env.data),
+			callbacks = subscribers[message.MessageType];
 	if(callbacks) {
 		callbacks.forEach(function(cb) {
-			cb(serializer.deserialize(env.message));
+			cb(serializer.deserialize(message.Message));
 		});
 	}
 };
 	
 var publish = function(msg) {
 	var envelope = {
-				name: msg.name,
-				message : serializer.serialize(msg)
+				MessageType: msg.MessageType,
+				Message: serializer.serialize(msg)
 			};
 	transport.publish(envelope);
 };

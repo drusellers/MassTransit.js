@@ -8,7 +8,7 @@ var amqp = require('amqp'),
 var createPendingExchange = function(exchangeName) {
 	var exchange = con.exchange(exchangeName, { durable: true, type: 'fanout' }),
 			waitingMessages = [],
-			that = {};
+			that = new events.EventEmitter();
 
 	var publish = function(route, message) {
 		waitingMessages.push({
@@ -18,7 +18,7 @@ var createPendingExchange = function(exchangeName) {
 	};
 
 	exchange.addListener('open', function() {
-		queue.bind(exchangeName, '');
+		that.emit('open');
 		exchanges[exchangeName] = exchange;
 		waitingMessages.forEach(function(m) {
 			exchange.publish(m.route, m.message);
@@ -32,6 +32,9 @@ var createPendingExchange = function(exchangeName) {
 
 var bind = function(exchangeName) {
 	exchanges[exchangeName] = exchanges[exchangeName] || createPendingExchange(exchangeName);
+	exchanges[exchangeName].addListener('open', function() {
+		queue.bind(exchangeName, '');
+	});
 };
 
 var close = function() {
@@ -41,7 +44,7 @@ var close = function() {
 var open = function() {
 	con = amqp.createConnection({ host: '0.0.0.0' });
 	con.addListener('ready', function() {
-		queue = con.queue('node', { durable: true }, function() {
+		queue = con.queue('bmavity', { durable: true }, function() {
 			emitter.emit('open');
 			queue.subscribe(function(message){
 				emitter.emit('messageReceived', message);
@@ -51,7 +54,10 @@ var open = function() {
 };
 
 var publish = function(message) {
-	var namedExchange = exchanges[message.name];
+	var exchangeName = message.MessageType;
+	exchanges[exchangeName] = exchanges[exchangeName] || createPendingExchange(exchangeName);
+	var namedExchange = exchanges[exchangeName];
+			
 	namedExchange.publish('', message);
 };
 
