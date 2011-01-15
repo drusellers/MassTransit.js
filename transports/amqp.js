@@ -41,10 +41,10 @@ var close = function() {
 	con.close();
 };
 
-var open = function() {
-	con = amqp.createConnection({ host: '0.0.0.0' });
+var open = function(config) {
+	con = amqp.createConnection({ host: config.host });
 	con.addListener('ready', function() {
-		queue = con.queue('bmavity', { durable: true }, function() {
+		queue = con.queue(config.queueName, { durable: true }, function() {
 			emitter.emit('open');
 			queue.subscribe(function(message){
 				emitter.emit('messageReceived', message);

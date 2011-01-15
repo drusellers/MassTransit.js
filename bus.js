@@ -1,5 +1,6 @@
 var serializer = require('./serializer'),
 		transport = require('./transports/amqp'),
+		config = require('./busConfig.js'),
 		subscribers = {},
 		isReady = false,
 		readyCallback;
@@ -47,7 +48,7 @@ transport.addListener('open', function() {
 
 transport.addListener('messageReceived', deliver);
 
-transport.open();
+transport.open(config);
 
 
 module.exports.deliver = deliver;
