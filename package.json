@@ -1,0 +1,24 @@
+{
+  "author": "Brian Mavity <brian@brianmavity.com> (http://www.brianmavity.com)",
+  "contributors": [
+    "Brian Mavity <brian@brianmavity.com> (http://www.brianmavity.com)",
+    "Dru Sellers <dru@drusellers.com> (http://www.drusellers.com)"
+  ],
+  "description": "node.js adapter for MassTransit Service Bus",
+  "dependencies": {
+    "amqp": "0.0.2"
+  },
+  "engines": {
+    "node": ">= 0.3.2-pre"
+  },
+  "keywords": [
+    "esb"
+  ],
+  "main": "./lib/bus",
+  "name": "masstransit",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/drusellers/MassTransit.js.git"
+  },
+  "version": "0.0.1"
+}

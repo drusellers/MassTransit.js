@@ -1,4 +1,4 @@
-var bus = require('./bus');
+var bus = require('masstransit');
 
 bus.ready(function() {
 	bus.subscribe('Tosca.Messages.CreateReservation', function(msg) {
