@@ -1,6 +1,7 @@
 var config = {
 	host: '0.0.0.0',
-	queueName: 'bmavity'
+	queueName: 'bmavity',
+	transport: 'amqp'
 };
 
 
