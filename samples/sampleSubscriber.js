@@ -4,6 +4,7 @@ var bus = require('masstransit'),
 bus.ready(config, function() {
 	bus.subscribe('Tosca.Messages.CreateReservation', function(msg) {
 		console.log(msg);
-		bus.publish({ MessageType: 'Tosca.Messages.ReservationConfirmed', Name: msg.Name });
+		bus.publish('Tosca.Messages.ReservationConfirmed', msg);
 	});
 });
+
