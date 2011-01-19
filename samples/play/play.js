@@ -1,3 +1,4 @@
+// This sample needs to be updated so it will work ;)
 var bus = require('./bus');
 
 bus.ready(function() {
