@@ -14,11 +14,10 @@
   "keywords": [
     "esb"
   ],
-  "main": "./lib/bus",
   "name": "masstransit",
   "repository": {
     "type": "git",
     "url": "git://github.com/drusellers/MassTransit.js.git"
   },
-  "version": "0.0.1"
+  "version": "0.0.2"
 }
