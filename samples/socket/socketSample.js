@@ -3,7 +3,7 @@ var http = require('http'),
     evented = require('eventedsocket'),
     fs = require('fs'),
     config = require('./socketSampleConfig'),
-    bus = require('masstransit').create(true),
+    bus = require('masstransit').create(),
     server = http.createServer(function(req, res) { 
       if(req.url === '/') {
         res.writeHeader(200, {'Content-Type': 'text/html'}); 
