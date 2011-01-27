@@ -1,4 +1,4 @@
-var bus = require('masstransit'),
+var bus = require('masstransit').create(true);
     config = require('./samplePublisherConfig');
 
 bus.ready(config, function() {
