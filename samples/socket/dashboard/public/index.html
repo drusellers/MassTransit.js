@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html lang="en" class="no-js">
+<!-- the "no-js" class is for Modernizr. -->
+
+<head>
+
+  <meta charset="utf-8" />
+  
+  <!-- This prevents the conditional comments below from holding up the page load
+     www.phpied.com/conditional-comments-block-downloads/ -->
+  <!--[if IE]><![endif]-->
+  
+  <title>MassTransit Dashboard</title>
+  
+  <meta name="description" content="Here is the description of your project." />
+  <!-- Google will often use this as its description of your page/site. Make it good. -->
+  
+  <meta name="author" content="Your Name Here" />
+  <meta name="copyright" content="Copyright Your Name Here 2010. All Rights Reserved." />
+
+  <meta name="DC.title" content="Project Name" />
+  <meta name="DC.subject" content="What you're about." />
+  <meta name="DC.creator" content="Who made this site." />
+  
+  <meta name="google-site-verification" content="" />
+  <!-- Speaking of Google, don't forget to set your site up: http://google.com/webmasters -->
+  
+  <link rel="shortcut icon" href="img/favicon.png"/>
+  <!-- This is the traditional favicon.
+     - size: 16x16 or 32x32
+     - transparency is OK
+     - see wikipedia for info on browser support: http://mky.be/favicon/ -->
+  
+  <link rel="apple-touch-icon" href="img/custom_icon.png"/>
+  <!-- The is the icon for iOS's Web Clip.
+     - size: 57x57 for older iPhones, 72x72 for iPads, 114x114 for iPhone4's retina display (IMHO, just go ahead and use the biggest one)
+     - To prevent iOS from applying its styles to the icon name it thusly: apple-touch-icon-precomposed.png
+     - Transparency is not recommended (iOS will put a black BG behind the icon) -->
+
+  <!-- address the mobile presentation
+     we suggest no default, as each project has its own needs
+  <meta name="viewport" content="width=device-width, user-scalable=no" />
+  -->
+  
+  <link rel="stylesheet" href="css/main.css" />
+  <!-- main.css is a gateway file. You will spend your time in core.css -->
+  <link rel="stylesheet" href="css/mt.css" />
+  
+  <link rel="stylesheet" href="css/_print/main.css" media="print" />
+  
+  <!-- These are IE-specific conditional style sheets. 
+     You might consider removing the ones you don't end up using. -->
+     
+  <!--[if IE]>
+  <link rel="stylesheet" href="css/patches/win-ie-all.css" />
+  <![endif]-->
+  <!--[if IE 7]>
+  <link rel="stylesheet" href="css/patches/win-ie7.css" />
+  <![endif]-->
+  <!--[if lt IE 7]>
+  <link rel="stylesheet" href="css/patches/win-ie-old.css" />
+  <![endif]-->
+  
+  <!-- The following is STRONGLY OPTIONAL, but useful if you really need to kick IE in the pants.
+     There are different flavors; pick the one right for your project: http://code.google.com/p/ie7-js/ -->
+  <!--[if lt IE 8]>
+  <script src="http://ie7-js.googlecode.com/svn/version/2.0(beta3)/IE8.js"></script>
+  <![endif]-->
+  
+  <!-- Either Modernizr OR the HTML5 Shiv script is required if you want IE compatability, AND you want to use the new, 
+     more-semantic HTML5 elements (header, article, footer, etc) 
+     - we've only included Modernizr; HTML5 Shiv can be found here: http://html5shiv.googlecode.com -->
+  
+  <!-- MODERNIZR: http://www.modernizr.com/ -->
+  <script src="js/modernizr-1.6.min.js"></script>
+  
+</head>
+
+<body>
+
+  <header>
+    <img src="img/mt-logo-text.png" alt="MassTransit text logo">
+    <h1>Dashboard</h1>
+  </header>
+  
+  <section class="mod"></section>
+
+  <div id="template" style="display:none">
+    <div class="bus">
+      <div class="queueName"></div>
+      <div class="hostName"></div>
+      <section class="subscriptionCount">8</section>
+    </div>
+  </div>
+
+
+  <!-- Grab Google CDN's jQuery. fall back to local if necessary -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+  
+  <script src="js/jquery.caruso.text.js"></script>
+  <script src="js/jquery.caruso.injector.js"></script>
+  <script src="socket.io/socket.io.js"></script>
+  <script src="js/eventedsocket.js"></script>
+  <script>
+    var socket = new io.Socket('localhost'), 
+        $template = $('#template').children(),
+        $container = $('section.mod');
+
+    socket.on('connect', function() {
+      console.log('connected');
+      var eClient = evented.client(socket);
+      eClient.on('a:busCreated', function(msg) {
+        var $bus = $template.clone().inject(msg).hide();
+        $container.append($bus);
+        $bus.show(500);
+      });
+    });
+
+    socket.on('message', function(msg) {
+      $('body').append('<p>' + JSON.stringify(msg) + '</p>');
+      $('body').append($('<p></p>').text(msg.Subscriber));
+    });
+    
+    socket.on('disconnect', function() {
+      console.log('disconnect');
+    });
+
+    socket.connect();
+  </script> 
+</body>
+</html>
