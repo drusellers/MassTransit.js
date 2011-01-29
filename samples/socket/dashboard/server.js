@@ -1,25 +1,14 @@
 var http = require('http'),  
     io = require('socket.io'),
     evented = require('eventedsocket'),
+    connect = require('connect'),
     fs = require('fs'),
-    config = require('./socketSampleConfig'),
+    config = require('./config'),
     bus = require('masstransit').create(),
-    server = http.createServer(function(req, res) { 
-      if(req.url === '/') {
-        res.writeHeader(200, {'Content-Type': 'text/html'}); 
-        fs.readFile(__dirname + '/socketclient.html', function(err, file) {
-          res.end(file.toString()); 
-        });
-      } else if(req.url.indexOf('.js') !== -1) {
-        res.writeHeader(200, {'Content-Type': 'text/javascript'}); 
-        fs.readFile(__dirname + req.url, function(err, file) {
-          res.end(file.toString()); 
-        });
-      } else {
-        res.writeHeader(404);
-        res.end();
-      }
-    }),
+    server = connect.createServer(
+      connect.logger(),
+      connect.staticProvider(__dirname + '/public')
+    ),
     socket = io.listen(server); 
 
 server.listen(8080);
