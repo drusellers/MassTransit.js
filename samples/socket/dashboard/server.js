@@ -31,7 +31,7 @@ bus.ready(config, function() {
   bus.subscribe('Diagnostics', function(m) {
     console.log(m);
     clients.forEach(function(client) {
-      client.emit('a:busCreated', m);
+      client.emit(m.evt, m);
     //socket.broadcast('a:busCreated', m);
     //socket.broadcast('a:newSubscription', m);
     });

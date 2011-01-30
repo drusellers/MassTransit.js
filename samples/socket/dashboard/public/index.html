@@ -91,6 +91,7 @@
       <div class="queueName"></div>
       <div class="hostName"></div>
       <section class="subscriptionCount">8</section>
+      <input type="hidden" class="id">
     </div>
   </div>
 
@@ -111,10 +112,15 @@
     socket.on('connect', function() {
       console.log('connected');
       var eClient = evented.client(socket);
-      eClient.on('a:busCreated', function(msg) {
+      
+      eClient.on('bus:ready', function(msg) {
         var $bus = $template.clone().inject(msg).hide();
         $container.append($bus);
         $bus.show(500);
+      });
+
+      eClient.on('bus:exited', function(msg) {
+        $('.bus input[value=' + msg.id + ']').parent().addClass('inactive');
       });
     });
 

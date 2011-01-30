@@ -17,6 +17,10 @@ header {
   -moz-box-shadow:0px 0px 15px rgb(48, 144, 205);
   -webkit-box-shadow:0px 0px 15px rgb(48, 144, 205);
 }
+  .bus.inactive {
+    -moz-box-shadow:0px 0px 15px rgb(0, 0, 0);
+    -webkit-box-shadow:0px 0px 15px rgb(0, 0, 0);
+  }
   .bus section {
     background-color:#e30;
     border:solid 2px #fff;
