@@ -13,9 +13,9 @@ var http = require('http'),
 server.listen(8080);
 
 socket.on('connection', function(client) { 
-  console.log('client: ', client);
+  console.log('connected: ' + client.sessionId);
   client.on('disconnect', function() {
-    console.log('disconnect');
+    console.log('disconnected: ' + client.sessionId);
   });
 }); 
 

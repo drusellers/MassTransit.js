@@ -116,18 +116,23 @@
         $container = $('section.mod'),
         handlers = {};
 
+    handlers['bus:exited'] = function(msg) {
+      $('.bus input[value=' + msg.id + ']').parent().addClass('inactive');
+    };
+    
     handlers['bus:ready'] = function(msg) {
       var $bus = $template.clone().inject(msg).hide();
       $container.append($bus);
       $bus.show(500);
     };
 
-    handlers['bus:exited'] = function(msg) {
-      $('.bus input[value=' + msg.id + ']').parent().addClass('inactive');
+    handlers['bus:subscriberRegistered'] = function(msg) {
+      console.log(msg);
     };
     
     socket.on('message', function(msg) {
       $('#allMessages').prepend($('#allMessagesTemplate').children().clone().inject(msg));
+      handlers[msg.evt](msg);
     });
 
     socket.on('disconnect', function() {
