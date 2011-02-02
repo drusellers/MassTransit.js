@@ -110,19 +110,15 @@
   <script src="js/jquery.caruso.text.js"></script>
   <script src="js/jquery.caruso.injector.js"></script>
   <script src="js/jquery.wagner.js"></script>
+  <script src="js/jquery.caruso.pubsub.js"></script>
   <script src="socket.io/socket.io.js"></script>
   <script>
-    Wagner.compose('socket', function() {
-      var socket = new io.Socket('localhost'), 
-          handlers = {};
-
-      var addHandler = function(evt, evtHandler) {
-        handlers[evt] = evtHandler;
-      };
+    Wagner.compose('socket', function(pubsub) {
+      var socket = new io.Socket('localhost');
 
       socket.on('message', function(msg) {
-        handlers['message'](msg);
-        handlers[msg.evt](msg);
+        pubsub.publish('message', msg);
+        pubsub.publish(msg.evt, msg);
       });
 
       socket.on('disconnect', function() {
@@ -130,36 +126,35 @@
       });
 
       socket.connect();
-
-      this.addHandler = addHandler;
     });
 
-    Wagner.compose('allMessages', function(socket, $allMessages, $allMessagesTemplate) {
-      var $template = $('#allMessagesTemplate').children();
+    Wagner.compose('allMessages', function(pubsub, $allMessages, $allMessagesTemplate) {
+      var $template = $allMessagesTemplate.children();
       
-      socket.addHandler('message', function(message) {
+      pubsub.subscribe('message', function(message) {
         $allMessages.prepend($template.clone().inject(message));
       });
     });
 
-    Wagner.compose('busDisplay', function(socket, $busDisplay, $busTemplate) {
+    Wagner.compose('busDisplay', function(pubsub, $busDisplay, $busTemplate) {
       var $template = $busTemplate.children();
 
-      socket.addHandler('bus:exited', function(msg) {
+      pubsub.subscribe('bus:exited', function(msg) {
         $('.bus input[value=' + msg.id + ']').parent().addClass('inactive');
       });
       
-      socket.addHandler('bus:ready', function(msg) {
+      pubsub.subscribe('bus:ready', function(msg) {
         var $bus = $busTemplate.clone().inject(msg).hide();
         $busDisplay.append($bus);
         $bus.show(500);
       });
 
-      socket.addHandler('bus:subscriberRegistered', function(msg) {
+      pubsub.subscribe('bus:subscriberRegistered', function(msg) {
         console.log(msg);
       });
     });
 
+    Wagner.compose('socket');
     Wagner.compose('allMessages');
     Wagner.compose('busDisplay');
   </script> 
