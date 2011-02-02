@@ -85,7 +85,7 @@
   </header>
   
   <section id="busDisplay" class="mod"></section>
-  <section id="allMessages"></section>
+  <section id="allMessages" style="display:none;"></section>
 
   <div id="busTemplate" style="display:none">
     <div class="bus">
@@ -131,9 +131,19 @@
     Wagner.compose('allMessages', function(pubsub, $allMessages, $allMessagesTemplate) {
       var $template = $allMessagesTemplate.children();
       
+      var init = function() {
+        var windowHeight = $(window).height();
+        $allMessages.height(windowHeight - 62);
+        $allMessages.fadeIn();
+      };
+
       pubsub.subscribe('message', function(message) {
-        $allMessages.prepend($template.inject(message));
+        var $msg = $template.inject(message).hide();
+        $allMessages.prepend($msg);
+        $msg.slideDown();
       });
+
+      init();
     });
 
     Wagner.compose('busDisplay', function(pubsub, $busDisplay, $busTemplate) {
