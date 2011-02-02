@@ -132,7 +132,7 @@
       var $template = $allMessagesTemplate.children();
       
       pubsub.subscribe('message', function(message) {
-        $allMessages.prepend($template.clone().inject(message));
+        $allMessages.prepend($template.inject(message));
       });
     });
 
@@ -144,7 +144,7 @@
       });
       
       pubsub.subscribe('bus:ready', function(msg) {
-        var $bus = $busTemplate.clone().inject(msg).hide();
+        var $bus = $busTemplate.inject(msg).hide();
         $busDisplay.append($bus);
         $bus.show(500);
       });

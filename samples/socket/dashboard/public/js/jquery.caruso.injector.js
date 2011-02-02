@@ -93,19 +93,20 @@
   $.fn.inject = function(obj) {
     var propertyName,
         foundElements,
-        setter;
+        setter,
+        $ele = this.clone();
 
-    for(propertyName in obj) {
-      foundElements = findElements(this, propertyName);
+    Object.keys(obj).forEach(function(propertyName) {
+      foundElements = findElements($ele, propertyName);
       if(foundElements) {
         setter = $.filterOne(setters, function(setterObj) {
           return setterObj.handles(foundElements);
         });
         setter.setValue(foundElements, obj[propertyName]);
       }
-    }
+    });
 
-    return this;
+    return $ele;
   };
 
 })(jQuery);
