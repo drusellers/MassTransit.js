@@ -84,10 +84,10 @@
     <h1>Dashboard</h1>
   </header>
   
-  <section class="mod"></section>
+  <section id="busDisplay" class="mod"></section>
   <section id="allMessages"></section>
 
-  <div id="template" style="display:none">
+  <div id="busTemplate" style="display:none">
     <div class="bus">
       <div class="queueName"></div>
       <div class="hostName"></div>
@@ -109,37 +109,59 @@
   
   <script src="js/jquery.caruso.text.js"></script>
   <script src="js/jquery.caruso.injector.js"></script>
+  <script src="js/jquery.wagner.js"></script>
   <script src="socket.io/socket.io.js"></script>
   <script>
-    var socket = new io.Socket('localhost'), 
-        $template = $('#template').children(),
-        $container = $('section.mod'),
-        handlers = {};
+    Wagner.compose('socket', function() {
+      var socket = new io.Socket('localhost'), 
+          handlers = {};
 
-    handlers['bus:exited'] = function(msg) {
-      $('.bus input[value=' + msg.id + ']').parent().addClass('inactive');
-    };
-    
-    handlers['bus:ready'] = function(msg) {
-      var $bus = $template.clone().inject(msg).hide();
-      $container.append($bus);
-      $bus.show(500);
-    };
+      var addHandler = function(evt, evtHandler) {
+        handlers[evt] = evtHandler;
+      };
 
-    handlers['bus:subscriberRegistered'] = function(msg) {
-      console.log(msg);
-    };
-    
-    socket.on('message', function(msg) {
-      $('#allMessages').prepend($('#allMessagesTemplate').children().clone().inject(msg));
-      handlers[msg.evt](msg);
+      socket.on('message', function(msg) {
+        handlers['message'](msg);
+        handlers[msg.evt](msg);
+      });
+
+      socket.on('disconnect', function() {
+        console.log('disconnect');
+      });
+
+      socket.connect();
+
+      this.addHandler = addHandler;
     });
 
-    socket.on('disconnect', function() {
-      console.log('disconnect');
+    Wagner.compose('allMessages', function(socket, $allMessages, $allMessagesTemplate) {
+      var $template = $('#allMessagesTemplate').children();
+      
+      socket.addHandler('message', function(message) {
+        $allMessages.prepend($template.clone().inject(message));
+      });
     });
 
-    socket.connect();
+    Wagner.compose('busDisplay', function(socket, $busDisplay, $busTemplate) {
+      var $template = $busTemplate.children();
+
+      socket.addHandler('bus:exited', function(msg) {
+        $('.bus input[value=' + msg.id + ']').parent().addClass('inactive');
+      });
+      
+      socket.addHandler('bus:ready', function(msg) {
+        var $bus = $busTemplate.clone().inject(msg).hide();
+        $busDisplay.append($bus);
+        $bus.show(500);
+      });
+
+      socket.addHandler('bus:subscriberRegistered', function(msg) {
+        console.log(msg);
+      });
+    });
+
+    Wagner.compose('allMessages');
+    Wagner.compose('busDisplay');
   </script> 
 </body>
 </html>
