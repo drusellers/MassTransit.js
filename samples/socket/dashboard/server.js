@@ -12,6 +12,7 @@ var http = require('http'),
 
 server.listen(8080);
 
+
 socket.on('connection', function(client) { 
   console.log('connected: ' + client.sessionId);
   client.on('disconnect', function() {
