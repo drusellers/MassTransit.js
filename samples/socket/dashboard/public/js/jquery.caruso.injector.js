@@ -94,7 +94,7 @@
     var propertyName,
         foundElements,
         setter,
-        $ele = this.clone();
+        $ele = this;
 
     Object.keys(obj).forEach(function(propertyName) {
       foundElements = findElements($ele, propertyName);

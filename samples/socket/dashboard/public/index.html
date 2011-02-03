@@ -148,7 +148,7 @@
         if(message.evt === 'bus:ready') {
           busNames[message.id] = message.queueName;
         }
-        $msg = $template.inject($.extend(message, {
+        $msg = $template.clone().inject($.extend(message, {
           queueName: busNames[message.id]
         })).hide();
         $messageContainer.prepend($msg);
@@ -166,7 +166,7 @@
       });
       
       pubsub.subscribe('bus:ready', function(msg) {
-        var $bus = $busTemplate.inject(msg).hide();
+        var $bus = $template.clone().inject(msg).hide();
         $busDisplay.append($bus);
         $bus.show(500);
       });
