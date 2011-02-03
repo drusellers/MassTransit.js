@@ -85,7 +85,9 @@
   </header>
   
   <section id="busDisplay" class="mod"></section>
-  <section id="allMessages" style="display:none;"></section>
+  <section id="allMessages" style="display:none;">
+    <section></section>
+  </section>
 
   <div id="busTemplate" style="display:none">
     <div class="bus">
@@ -132,11 +134,12 @@
 
     Wagner.compose('allMessages', function(pubsub, $allMessages, $allMessagesTemplate) {
       var $template = $allMessagesTemplate.children(),
+          $messageContainer = $allMessages.find('> section'),
           busNames = {};
       
       var init = function() {
         var windowHeight = $(window).height();
-        $allMessages.height(windowHeight - 62);
+        $messageContainer.height(windowHeight - 80);
         $allMessages.fadeIn();
       };
 
@@ -148,7 +151,7 @@
         $msg = $template.inject($.extend(message, {
           queueName: busNames[message.id]
         })).hide();
-        $allMessages.prepend($msg);
+        $messageContainer.prepend($msg);
         $msg.slideDown();
       });
 
