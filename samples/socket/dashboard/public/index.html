@@ -99,7 +99,8 @@
   <div id="allMessagesTemplate">
     <section class="message">
       <h1 class="evt"></h1>
-      <h2 class="id"></h2>
+      <h2 class="queueName"></h2>
+      <time class="time"></time>
     </section>
   </div>
 
@@ -130,7 +131,8 @@
     });
 
     Wagner.compose('allMessages', function(pubsub, $allMessages, $allMessagesTemplate) {
-      var $template = $allMessagesTemplate.children();
+      var $template = $allMessagesTemplate.children(),
+          busNames = {};
       
       var init = function() {
         var windowHeight = $(window).height();
@@ -139,7 +141,13 @@
       };
 
       pubsub.subscribe('message', function(message) {
-        var $msg = $template.inject(message).hide();
+        var $msg;
+        if(message.evt === 'bus:ready') {
+          busNames[message.id] = message.queueName;
+        }
+        $msg = $template.inject($.extend(message, {
+          queueName: busNames[message.id]
+        })).hide();
         $allMessages.prepend($msg);
         $msg.slideDown();
       });
