@@ -93,7 +93,7 @@
     <div class="bus">
       <div class="queueName"></div>
       <div class="hostName"></div>
-      <section class="subscriptionCount">8</section>
+      <section class="subscriptionCount"></section>
       <input type="hidden" class="id">
     </div>
   </div>
@@ -159,16 +159,29 @@
     });
 
     Wagner.compose('busDisplay', function(pubsub, $busDisplay, $busTemplate) {
-      var $template = $busTemplate.children();
+      var $template = $busTemplate.children(),
+          busses = {};
+
+      var createBus = function(busReadyMessage) {
+        var $ele = $template.clone(),
+            subscribers = [],
+            that = $.extend({}, busReadyMessage);
+
+        $ele.inject(that).hide();
+
+        that.$ele = $ele;
+        return that;
+      };
 
       pubsub.subscribe('bus:exited', function(msg) {
         $('.bus input[value=' + msg.id + ']').parent().addClass('inactive');
       });
       
       pubsub.subscribe('bus:ready', function(msg) {
-        var $bus = $template.clone().inject(msg).hide();
-        $busDisplay.append($bus);
-        $bus.show(500);
+        var bus = createBus(msg);
+        busses[msg.id] = bus;
+        $busDisplay.append(bus.$ele);
+        bus.$ele.show(500);
       });
 
       pubsub.subscribe('bus:subscriberRegistered', function(msg) {
