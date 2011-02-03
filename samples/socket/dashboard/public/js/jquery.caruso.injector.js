@@ -90,23 +90,25 @@
     }
   };
 
-  $.fn.inject = function(obj) {
-    var propertyName,
-        foundElements,
-        setter,
-        $ele = this;
-
-    Object.keys(obj).forEach(function(propertyName) {
-      foundElements = findElements($ele, propertyName);
-      if(foundElements) {
-        setter = $.filterOne(setters, function(setterObj) {
-          return setterObj.handles(foundElements);
-        });
-        setter.setValue(foundElements, obj[propertyName]);
+  var setPropertyValue = function(obj, $ele, callbacks, propertyName) {
+    var foundElements = findElements($ele, propertyName),
+        val = obj[propertyName],
+        callback = callbacks && callbacks[propertyName],
+        setter;
+    if(foundElements) {
+      setter = $.filterOne(setters, function(setterObj) {
+        return setterObj.handles(foundElements);
+      });
+      setter.setValue(foundElements, val);
+      if(callback) {
+        callback(foundElements, val);
       }
-    });
+    }
+  };
 
-    return $ele;
+  $.fn.inject = function(obj, callbacks) {
+    Object.keys(obj).forEach(setPropertyValue.bind(this, obj, this, callbacks));
+    return this;
   };
 
 })(jQuery);

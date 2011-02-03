@@ -2,11 +2,15 @@ var bus = require('masstransit').create(true);
     config = require('./samplePublisherConfig');
 
 bus.ready(config, function() {
-  bus.subscribe('CoffeeOrdered', function coffeeOrdered(m) {
-    console.log('coffee ordered: ', m);
-  });
+  setTimeout(function() {
+    bus.subscribe('CoffeeOrdered', function coffeeOrdered(m) {
+      console.log('coffee ordered: ', m);
+    });
+  }, 3000);
 
-  bus.subscribe('CoffeeReceived', function coffeeReceived(m) {
-    console.log('coffee received: ', m);
-  });
+  setTimeout(function() {
+    bus.subscribe('CoffeeReceived', function coffeeReceived(m) {
+      console.log('coffee received: ', m);
+    });
+  }, 6000);
 });

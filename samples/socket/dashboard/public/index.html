@@ -93,7 +93,7 @@
     <div class="bus">
       <div class="queueName"></div>
       <div class="hostName"></div>
-      <section class="subscriberCount"></section>
+      <section class="subscriberCount" style="display:none;"></section>
     </div>
   </div>
 
@@ -173,7 +173,14 @@
 
         handlers['bus:subscriberRegistered'] = function(subscriberRegisteredMessage) {
           subscribers.push(subscriberRegisteredMessage);
-          $ele.inject({ subscriberCount: subscribers.length });
+          $ele.inject({
+            subscriberCount: subscribers.length
+          }, {
+            subscriberCount: function($ele, val) {
+              if(!$ele.is(':visible')) {
+                $ele.show(500);
+              }
+          }});
         };
 
         $ele.inject(that).hide();
