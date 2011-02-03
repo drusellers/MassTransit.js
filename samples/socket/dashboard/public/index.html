@@ -93,7 +93,7 @@
     <div class="bus">
       <div class="queueName"></div>
       <div class="hostName"></div>
-      <section class="subscriptionCount"></section>
+      <section class="subscriberCount"></section>
     </div>
   </div>
 
@@ -164,11 +164,22 @@
       var createBus = function(busReadyMessage) {
         var $ele = $template.clone(),
             subscribers = [],
+            handlers = {},
             that = $.extend({}, busReadyMessage);
+
+        var handle = function(message) {
+          handlers[message.evt](message);
+        };
+
+        handlers['bus:subscriberRegistered'] = function(subscriberRegisteredMessage) {
+          subscribers.push(subscriberRegisteredMessage);
+          $ele.inject({ subscriberCount: subscribers.length });
+        };
 
         $ele.inject(that).hide();
 
         that.$ele = $ele;
+        that.handle = handle;
         return that;
       };
 
@@ -184,7 +195,7 @@
       });
 
       pubsub.subscribe('bus:subscriberRegistered', function(msg) {
-        console.log(msg);
+        busses[msg.id].handle(msg);
       });
     });
 
