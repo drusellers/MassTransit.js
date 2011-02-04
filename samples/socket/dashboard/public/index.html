@@ -96,9 +96,12 @@
       <p class="hostName"></p>
       <h2>Came Online</h2>
       <time class="time"></time>
-      <h2 class="subscriberLabel">Subscribers</h2>
+      <h2 class="subscriberLabel">
+        <span class="subscriberCount">0</span>
+        Subscribers
+      </h2>
       <section style="display:none;">
-        <p class="subscriberCount"></p>
+        <p>+1</p>
       </section>
     </section>
   </div>
@@ -183,9 +186,13 @@
             subscriberCount: subscribers.length
           }, {
             subscriberCount: function($ele, val) {
-              var $container = $ele.parent();
+              var $container = $ele.parent().next();
               if(!$container.is(':visible')) {
-                $container.show(500);
+                $container.show(500, function() {
+                  setTimeout(function() {
+                    $container.hide(250);
+                  }, 1500);
+                });
               }
           }});
         };
