@@ -7,10 +7,13 @@ header {
 }
 .bus {
   float:left;
+  font-size:12px;
   height:150px;
+  line-height:16px;
   margin:10px;
+  padding:5px;
   position:relative;
-  width:150px;
+  width:175px;
 
   -moz-border-radius:5px 5px 5px 5px;
   -webkit-border-radius:5px 5px 5px 5px;      
@@ -21,6 +24,15 @@ header {
     -moz-box-shadow:0px 0px 15px rgb(0, 0, 0);
     -webkit-box-shadow:0px 0px 15px rgb(0, 0, 0);
   }
+  .bus h1 {
+    font-size:14px;
+    line-height:1.5em;
+    padding-bottom:4px;
+  }
+  .bus .subscriberLabel {
+    bottom:5px;
+    position:absolute;
+  }
   .bus section {
     background-color:#e30;
     border:solid 2px #fff;
@@ -28,8 +40,8 @@ header {
     color:white;
     font-size:18px;
     font-weight:bold;
-    height:31px;
-    padding-top:5px;
+    height:36px;
+    line-height:36px;
     position:absolute;
     right:-10px;
     text-align:center;
@@ -43,7 +55,7 @@ header {
 
 #allMessages {
   background-color:#000;
-  opacity:0.5;
+  opacity:0.75;
   padding:10px;
   position:absolute;
   right:20px;

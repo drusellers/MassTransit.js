@@ -90,11 +90,17 @@
   </section>
 
   <div id="busTemplate" style="display:none">
-    <div class="bus">
-      <div class="queueName"></div>
-      <div class="hostName"></div>
-      <section class="subscriberCount" style="display:none;"></section>
-    </div>
+    <section class="bus">
+      <h1 class="queueName"></h1>
+      <h2>Host Name</h2>
+      <p class="hostName"></p>
+      <h2>Came Online</h2>
+      <time class="time"></time>
+      <h2 class="subscriberLabel">Subscribers</h2>
+      <section style="display:none;">
+        <p class="subscriberCount"></p>
+      </section>
+    </section>
   </div>
 
   <div id="allMessagesTemplate">
@@ -177,8 +183,9 @@
             subscriberCount: subscribers.length
           }, {
             subscriberCount: function($ele, val) {
-              if(!$ele.is(':visible')) {
-                $ele.show(500);
+              var $container = $ele.parent();
+              if(!$container.is(':visible')) {
+                $container.show(500);
               }
           }});
         };
