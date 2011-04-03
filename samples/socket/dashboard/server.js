@@ -6,7 +6,7 @@ var http = require('http'),
     bus = require('masstransit').create(),
     server = connect.createServer(
       connect.logger(),
-      connect.staticProvider(__dirname + '/public')
+      connect.static(__dirname + '/public')
     ),
     socket = io.listen(server); 
 
