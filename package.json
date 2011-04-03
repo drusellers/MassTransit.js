@@ -6,18 +6,20 @@
   ],
   "description": "node.js adapter for MassTransit Service Bus",
   "dependencies": {
-    "amqp": "0.0.2"
+    "amqp": "0.0.2",
+    "node-uuid": "1.1.0"
   },
   "engines": {
-    "node": ">= 0.3.2-pre"
+    "node": "0.4.5"
   },
   "keywords": [
     "esb"
   ],
+  "main": "./lib/index.js",
   "name": "masstransit",
   "repository": {
     "type": "git",
     "url": "git://github.com/drusellers/MassTransit.js.git"
   },
-  "version": "0.0.2"
+  "version": "0.0.3"
 }
