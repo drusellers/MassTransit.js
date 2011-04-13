@@ -19,19 +19,16 @@ verify.wasCalled = function() {
 };
 
 suite.addBatch({
-  'when initialized properly': {
+  'when transport is ready': {
     topic: function() {
       var bus = require('../lib/bus')
       bus.ready(this.callback);
       bus.init({
-        transport: __dirname + '/spy'
+        transport: 'memory'
       });
     },
 
-    'should initialize transport': function() {
-      var spy = require('./spy');
-      verify(spy.initialized).shouldBe('true');
-    }
+    'should be ready': verify.wasCalled
   }
 });
 
