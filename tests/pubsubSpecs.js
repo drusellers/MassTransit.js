@@ -33,7 +33,6 @@ suite.addBatch({
     },
 
     'should be notified when event is published': function(err, message) {
-    console.log(message);
       verify(message).shouldBe('equal', 'message');
     }
   }
